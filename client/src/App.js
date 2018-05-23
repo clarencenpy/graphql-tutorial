@@ -14,18 +14,15 @@ const GET_CHANNELS = gql`
 
 
 const ChannelsList = ({ channels }) => {
-  return <ul>
-    {channels.map(ch => <li key={ch.id}>{ch.name}</li>)}
-  </ul>;
+  return <div className="channelsList">
+    {channels.map(ch => <div className="channel" key={ch.id}>{ch.name}</div>)}
+  </div>;
 };
 
 const App = () => (
 
   <div className="App">
-    <header className="App-header">
-      <img src={logo} className="App-logo" alt="logo"/>
-      <h1 className="App-title">Welcome to Apollo</h1>
-    </header>
+    <div className="navbar">React + GraphQL Tutorial</div>
 
     {/* Use the new Query HOC */}
     <Query query={GET_CHANNELS}>
