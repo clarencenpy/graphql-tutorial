@@ -53,6 +53,7 @@ class AddChannel extends Component {
                     data: { channels: channels.concat([addChannel]) },
                   });
                 }}
+
       >
 
         {
@@ -88,7 +89,9 @@ const App = () => (
     <div className="navbar">React + GraphQL Tutorial</div>
 
     {/* Use the new Query HOC */}
-    <Query query={GET_CHANNELS}>
+    <Query query={GET_CHANNELS}
+           pollInterval={500}
+    >
       {
         ({ loading, error, data }) => {
           if (loading) return <p>Loading...</p>;
