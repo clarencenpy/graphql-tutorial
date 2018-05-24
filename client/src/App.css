@@ -80,6 +80,10 @@ div.channelsList .status {
     color: #fff
 }
 
+div.optimistic {
+    color: rgba(255, 255, 255, 0.5);
+}
+
 div.channelsList:before {
   content: "+";
   display: inline-block;

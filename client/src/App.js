@@ -52,7 +52,20 @@ class AddChannel extends Component {
                     query: GET_CHANNELS,
                     data: { channels: channels.concat([addChannel]) },
                   });
+                  console.log(channels)
+
                 }}
+                optimisticResponse={{
+                  __typename: 'Mutation',
+                  addChannel: {
+                    __typename: 'Channel',
+                    name: this.state.name,
+                    // exploit the fact that optimistic ids are negative,
+                    // to style them differently
+                    id: Math.round(Math.random() * -1000000)
+                  },
+                }}
+
 
       >
 
@@ -64,8 +77,6 @@ class AddChannel extends Component {
                 <input value={this.state.name}
                        onChange={this.handleChange.bind(this)}/>
               </form>
-              {loading && <p className="status">Loading...</p>}
-              {error && <p className="status">Error</p>}
             </div>;
           }
         }
@@ -79,7 +90,8 @@ class AddChannel extends Component {
 const ChannelsList = ({ channels }) => {
   return <div className="channelsList">
     <AddChannel/>
-    {channels.map(ch => <div className="channel" key={ch.id}>{ch.name}</div>)}
+    {channels.map(ch => <div className={'channel ' + (ch.id < 0 ? 'optimistic' : '')}
+                             key={ch.id}>{ch.name}</div>)}
   </div>;
 };
 
