@@ -50,7 +50,7 @@ div.channelsList {
 div.channel {
   position: relative;
   padding: 10px 20px;
-  border-bottom: 1px solidw rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.8);
   font-weight: 300;
   width: 200px;
@@ -70,6 +70,10 @@ div.channelsList input {
   font-weight: 300;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: 300ms all ease-out;
+}
+
+div.channelsList .status {
+    color: #fff
 }
 
 div.channelsList:before {

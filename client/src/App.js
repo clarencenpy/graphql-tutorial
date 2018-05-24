@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './App.css';
 import { Query, Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
@@ -21,42 +21,57 @@ const ADD_CHANNEL = gql`
   }
 `;
 
+// Controlled component for the input element
+class AddChannel extends Component {
 
-const AddChannel = () => {
+  constructor(props) {
+    super(props);
+    this.state = { name: '' };
+  }
 
-  let input;
+  handleChange(e) {
+    this.setState({ name: e.target.value });
+  }
 
-  return (
-    <Mutation mutation={ADD_CHANNEL}
-              update={(cache, { data: { addChannel } }) => {
-                // Perform cache updates so we see the UI changes immediately
-                const { channels } = cache.readQuery({ query: GET_CHANNELS });
-                cache.writeQuery({
-                  query: GET_CHANNELS,
-                  data: { channels: channels.concat([addChannel]) },
-                });
-              }}
-    >
 
-      {
-        addChannel => (
-          <div>
-            <form onSubmit={e => {
-              e.preventDefault();
-              // pass the variables to the mutation query that is passed in
-              addChannel({ variables: { name: input.value } });
-              // reset the input box
-              input.value = '';
-            }}>
-              <input type="text" ref={node => {
-                input = node;
-              }}/>
-            </form>
-          </div>
-        )
-      }
-    </Mutation>
-  );
+  handleSubmit(addChannel, e) {
+    e.preventDefault();
+    // pass the variables to the mutation query that is passed in
+    addChannel({ variables: { name: this.state.name } });
+    // reset the input box
+    this.setState({ name: '' });
+  }
+
+  render() {
+    return (
+      <Mutation mutation={ADD_CHANNEL}
+                update={(cache, { data: { addChannel } }) => {
+                  // Perform cache updates so we see the UI changes immediately
+                  const { channels } = cache.readQuery({ query: GET_CHANNELS });
+                  cache.writeQuery({
+                    query: GET_CHANNELS,
+                    data: { channels: channels.concat([addChannel]) },
+                  });
+                }}
+      >
+
+        {
+          (addChannel, { loading, error }) => {
+
+            return <div>
+              <form onSubmit={this.handleSubmit.bind(this, addChannel)}>
+                <input value={this.state.name}
+                       onChange={this.handleChange.bind(this)}/>
+              </form>
+              {loading && <p className="status">Loading...</p>}
+              {error && <p className="status">Error</p>}
+            </div>;
+          }
+        }
+
+      </Mutation>
+    );
+  };
 };
 
 

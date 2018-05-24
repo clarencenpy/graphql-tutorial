@@ -8,6 +8,10 @@ const channels = [{
 
 let nextId = 3;
 
+function sleep(time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
 export const resolvers = {
   Query: {
     channels: () => {
@@ -17,9 +21,12 @@ export const resolvers = {
 
   Mutation: {
     addChannel: (root, args) => {
-      const newChannel = { id: nextId++, name: args.name };
-      channels.push(newChannel)
-      return newChannel
+      return sleep(500).then(() => {
+        const newChannel = { id: nextId++, name: args.name };
+        channels.push(newChannel);
+        return newChannel;
+      });
+
     },
   },
 };
