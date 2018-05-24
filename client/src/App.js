@@ -1,7 +1,6 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { Query } from 'react-apollo';
+import { Query, Mutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 
 const GET_CHANNELS = gql`
@@ -13,8 +12,57 @@ const GET_CHANNELS = gql`
   }`;
 
 
+const ADD_CHANNEL = gql`
+  mutation addChannel($name: String!) {
+    addChannel(name: $name) {
+      id
+      name
+    }
+  }
+`;
+
+
+const AddChannel = () => {
+
+  let input;
+
+  return (
+    <Mutation mutation={ADD_CHANNEL}
+              update={(cache, { data: { addChannel } }) => {
+                // Perform cache updates so we see the UI changes immediately
+                const { channels } = cache.readQuery({ query: GET_CHANNELS });
+                cache.writeQuery({
+                  query: GET_CHANNELS,
+                  data: { channels: channels.concat([addChannel]) },
+                });
+              }}
+    >
+
+      {
+        addChannel => (
+          <div>
+            <form onSubmit={e => {
+              e.preventDefault();
+              // pass the variables to the mutation query that is passed in
+              addChannel({ variables: { name: input.value } });
+              // reset the input box
+              input.value = '';
+            }}>
+              <input type="text" ref={node => {
+                input = node;
+              }}/>
+            </form>
+          </div>
+        )
+      }
+    </Mutation>
+  );
+};
+
+
 const ChannelsList = ({ channels }) => {
   return <div className="channelsList">
+    <AddChannel/>
     {channels.map(ch => <div className="channel" key={ch.id}>{ch.name}</div>)}
   </div>;
 };
