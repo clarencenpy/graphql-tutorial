@@ -19,15 +19,23 @@ export const GET_CHANNEL = gql`
 `;
 
 const ChannelDetails = ({ match }) => (
-  <Query query={GET_CHANNEL} variables={{ channelId: match.params.channelId }}>
-    {({ loading, error, data: { channel } }) => {
+  <Query
+    query={GET_CHANNEL}
+    errorPolicy="all"
+    variables={{ channelId: match.params.channelId }}
+  >
+    {({ data, error, loading }) => {
       if (loading) return <ChannelPreview channelId={match.params.channelId} />;
-      if (error) return <p>{error.message}</p>;
-      if (channel === null) return <NotFound />;
+      if (error) {
+        return error.graphQLErrors.map(({ message }, i) => (
+          <span key={i}>{message}</span>
+        ));
+      }
+      if (data.channel === null) return <NotFound />;
       return (
         <div>
-          <div className="channelName">{channel.name}</div>
-          <MessageList messages={channel.messages} />
+          <div className="channelName">{data.channel.name}</div>
+          <MessageList messages={data.channel.messages} />
         </div>
       );
     }}
