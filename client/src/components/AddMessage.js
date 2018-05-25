@@ -14,7 +14,6 @@ const ADD_MESSAGE = gql`
 `;
 
 class AddMessage extends Component {
-
   constructor(props) {
     super(props);
     this.state = { text: '' };
@@ -23,7 +22,6 @@ class AddMessage extends Component {
   handleChange(e) {
     this.setState({ text: e.target.value });
   }
-
 
   handleSubmit(addMessage, e) {
     e.preventDefault();
@@ -43,50 +41,51 @@ class AddMessage extends Component {
   render() {
     const channelId = this.props.match.params.channelId;
     return (
-      <Mutation mutation={ADD_MESSAGE}
-                update={(cache, { data: { addMessage } }) => {
-                  // Perform cache updates so we see the UI changes immediately
-                  const data = cache.readQuery({
-                    query: GET_CHANNEL,
-                    variables: { channelId },
-                  });
-                  // Add our Message from the mutation to the end.
-                  data.channel.messages.push(addMessage);
-                  // Write the data back to cache
-                  cache.writeQuery({
-                    query: GET_CHANNEL,
-                    variables: { channelId },
-                    data,
-                  });
-                }}
-                optimisticResponse={{
-                  __typename: 'Mutation',
-                  addMessage: {
-                    __typename: 'Message',
-                    text: this.state.text,
-                    // exploit the fact that optimistic ids are negative,
-                    // to style them differently
-                    id: Math.round(Math.random() * -1000000),
-                  },
-                }}
+      <Mutation
+        mutation={ADD_MESSAGE}
+        update={(cache, { data: { addMessage } }) => {
+          // Perform cache updates so we see the UI changes immediately
+          const data = cache.readQuery({
+            query: GET_CHANNEL,
+            variables: { channelId },
+          });
+          // Add our Message from the mutation to the end.
+          data.channel.messages.push(addMessage);
+          // Write the data back to cache
+          cache.writeQuery({
+            query: GET_CHANNEL,
+            variables: { channelId },
+            data,
+          });
+        }}
+        optimisticResponse={{
+          __typename: 'Mutation',
+          addMessage: {
+            __typename: 'Message',
+            text: this.state.text,
+            // exploit the fact that optimistic ids are negative,
+            // to style them differently
+            id: Math.round(Math.random() * -1000000),
+          },
+        }}
       >
-
-        {
-          (addMessage, { loading, error }) => {
-            return <div className='messageInput'>
+        {(addMessage, { loading, error }) => {
+          return (
+            <div className="messageInput">
               <form onSubmit={this.handleSubmit.bind(this, addMessage)}>
-                <input value={this.state.text}
-                       placeholder='Add Message'
-                       onChange={this.handleChange.bind(this)}/>
+                <input
+                  value={this.state.text}
+                  placeholder="Add Message"
+                  onChange={this.handleChange.bind(this)}
+                />
               </form>
               {loading && <p>Loading...</p>}
-            </div>;
-          }
-        }
-
+            </div>
+          );
+        }}
       </Mutation>
     );
-  };
-};
+  }
+}
 
 export default withRouter(AddMessage);
