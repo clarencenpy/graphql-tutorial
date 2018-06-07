@@ -7,11 +7,11 @@ import registerServiceWorker from './registerServiceWorker';
 
 import ApolloClient from 'apollo-boost';
 
-// Use apollo-boost to initialize with sane defaults
+// Use apollo-boost to initialize with useful defaults
 const client = new ApolloClient({
   uri: 'http://localhost:4000/graphql/',
   request: async (operation) => {
-    const token = 'verysecretkey';
+    const token = 'verysecretakey';
     operation.setContext({
       headers: {
         authorization: token
